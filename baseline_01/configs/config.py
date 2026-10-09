@@ -10,7 +10,7 @@ TEST_VIDEOS = [4, 5, 9, 11, 14, 20, 21, 25, 29, 34, 35, 37, 43, 44, 45, 47]
 
 # Training hyperparameters
 LR = 1e-3
-BATCH_SIZE = 32
+BATCH_SIZE = 64  # Per-GPU batch size
 EPOCHS = 50
 
 # Image preprocessing
@@ -29,5 +29,15 @@ CHECKPOINT_DIR = "checkpoints"
 CHECKPOINT_NAME = "best_model.pth"
 
 # DataLoader settings
-NUM_WORKERS = 2
+NUM_WORKERS = 4
 PIN_MEMORY = True
+PERSISTENT_WORKERS = True
+PREFETCH_FACTOR = 2
+
+# Performance Optimization Flags
+USE_AMP = True             # Automatic Mixed Precision (FP16)
+USE_CHANNELS_LAST = True    # Channels Last memory format (NHWC)
+CUDNN_BENCHMARK = True     # cuDNN autotuner for fixed shape (128x128)
+USE_DDP = True             # DistributedDataParallel for multi-GPU
+SEED = 42                  # Reproducibility seed
+

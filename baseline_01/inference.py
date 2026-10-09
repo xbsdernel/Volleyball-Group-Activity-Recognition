@@ -12,16 +12,19 @@ from utils.device import get_device
 from utils.checkpoint import load_checkpoint
 
 
-def predict(image_path, model, device, transform):
+def predict(image_path, model, device, transform, use_amp=config.USE_AMP, use_channels_last=config.USE_CHANNELS_LAST):
     model.eval()
     image = Image.open(image_path).convert('RGB')
     image = transform(image).unsqueeze(0).to(device)
+    if use_channels_last:
+        image = image.to(memory_format=torch.channels_last)
 
     with torch.no_grad():
-        outputs = model(image)
+        with torch.cuda.amp.autocast(enabled=use_amp):
+            outputs = model(image)
         predicted_idx = torch.argmax(outputs, dim=1).item()
 
-    if hasattr(label_encoder, "classes_"):
+    if hasattr(label_encoder, "classes_") and len(label_encoder.classes_) > 0:
         predicted_label = label_encoder.inverse_transform([predicted_idx])[0]
     else:
         predicted_label = predicted_idx
@@ -43,7 +46,7 @@ def main():
     device = get_device()
     transform = get_transforms()
 
-    model = build_model(device)
+    model = build_model(device=device, use_channels_last=config.USE_CHANNELS_LAST)
 
     if os.path.isfile(args.checkpoint):
         model = load_checkpoint(model, args.checkpoint, device)
@@ -57,3 +60,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

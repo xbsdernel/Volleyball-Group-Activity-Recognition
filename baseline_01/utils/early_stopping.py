@@ -12,7 +12,7 @@ class EarlyStopping:
         self.counter = 0
         self.should_stop = False
 
-    def step(self, avg_val_loss, model):
+    def step(self, avg_val_loss, model, optimizer=None, scheduler=None, scaler=None, epoch=0, is_main_process=True):
         """
         Call after each epoch with the current validation loss.
         Saves a checkpoint if the loss improved, otherwise increments
@@ -22,12 +22,23 @@ class EarlyStopping:
         if avg_val_loss < self.best_val_loss:
             self.best_val_loss = avg_val_loss
             self.counter = 0
-            save_checkpoint(model)
+            if is_main_process:
+                save_checkpoint(
+                    model=model,
+                    optimizer=optimizer,
+                    scheduler=scheduler,
+                    scaler=scaler,
+                    epoch=epoch,
+                    best_val_loss=self.best_val_loss
+                )
         else:
             self.counter += 1
-            print(f"No improvement: {self.counter}/{self.patience}")
+            if is_main_process:
+                print(f"No improvement: {self.counter}/{self.patience}")
             if self.counter >= self.patience:
-                print("Early Stopping!")
+                if is_main_process:
+                    print("Early Stopping!")
                 self.should_stop = True
 
         return self.should_stop
+

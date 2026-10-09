@@ -16,11 +16,11 @@ def main():
     train_dataset, val_dataset, test_dataset = get_datasets(
         train_data, val_data, test_data
     )
-    train_loader, val_loader, test_loader = get_dataloaders(
+    train_loader, val_loader, test_loader, _ = get_dataloaders(
         train_dataset, val_dataset, test_dataset
     )
 
-    model = build_model(device)
+    model = build_model(device=device, use_channels_last=config.USE_CHANNELS_LAST)
 
     checkpoint_path = os.path.join(config.CHECKPOINT_DIR, config.CHECKPOINT_NAME)
     if os.path.isfile(checkpoint_path):
@@ -29,8 +29,10 @@ def main():
         print(f"Warning: checkpoint not found at {checkpoint_path}. "
               f"Evaluating with current model weights.")
 
-    evaluate_test(model, test_loader, test_dataset, device)
+    evaluate_test(model, test_loader, test_dataset, device,
+                  use_amp=config.USE_AMP, use_channels_last=config.USE_CHANNELS_LAST)
 
 
 if __name__ == "__main__":
     main()
+
