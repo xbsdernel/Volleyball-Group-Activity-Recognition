@@ -20,9 +20,10 @@ def predict(image_path, model, device, transform, use_amp=config.USE_AMP, use_ch
         image = image.to(memory_format=torch.channels_last)
 
     with torch.no_grad():
-        with torch.cuda.amp.autocast(enabled=use_amp):
+        with torch.amp.autocast('cuda', enabled=use_amp):
             outputs = model(image)
         predicted_idx = torch.argmax(outputs, dim=1).item()
+
 
     if hasattr(label_encoder, "classes_") and len(label_encoder.classes_) > 0:
         predicted_label = label_encoder.inverse_transform([predicted_idx])[0]

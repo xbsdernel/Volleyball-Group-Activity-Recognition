@@ -68,7 +68,8 @@ def train_worker(rank, world_size, train_data, val_data, test_data):
         T_max=config.EPOCHS,
         eta_min=1e-6
     )
-    scaler = torch.cuda.amp.GradScaler(enabled=config.USE_AMP)
+    scaler = torch.amp.GradScaler('cuda', enabled=config.USE_AMP)
+
 
     # Metric tracking
     total_loss_train_plot = []
@@ -167,6 +168,9 @@ def train_worker(rank, world_size, train_data, val_data, test_data):
 
 def main():
     set_seed(config.SEED)
+    print("[Main] Pre-caching pretrained ResNet-50 weights...")
+    _ = build_model(device="cpu", use_channels_last=False)
+
     train_data, val_data, test_data = prepare_data()
 
     num_gpus = torch.cuda.device_count() if torch.cuda.is_available() else 0
@@ -177,6 +181,7 @@ def main():
     else:
         print("[Main] Running single-process execution...")
         train_worker(0, 1, train_data, val_data, test_data)
+
 
 
 if __name__ == "__main__":

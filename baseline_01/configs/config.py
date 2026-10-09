@@ -29,10 +29,11 @@ CHECKPOINT_DIR = "checkpoints"
 CHECKPOINT_NAME = "best_model.pth"
 
 # DataLoader settings
-NUM_WORKERS = 4
+NUM_WORKERS = 2  # 2 workers per DDP rank = 4 total workers matching Kaggle 4 vCPUs
 PIN_MEMORY = True
 PERSISTENT_WORKERS = True
 PREFETCH_FACTOR = 2
+
 
 # Performance Optimization Flags
 USE_AMP = True             # Automatic Mixed Precision (FP16)

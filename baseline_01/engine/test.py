@@ -14,8 +14,9 @@ def evaluate_test(model, test_loader, test_dataset, device,
             if use_channels_last:
                 inputs = inputs.to(memory_format=torch.channels_last)
 
-            with torch.cuda.amp.autocast(enabled=use_amp):
+            with torch.amp.autocast('cuda', enabled=use_amp):
                 predictions = model(inputs)
+
 
             acc = compute_correct(predictions, labels)
             total_acc_test += acc

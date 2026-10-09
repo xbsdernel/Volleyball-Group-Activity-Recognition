@@ -25,9 +25,10 @@ def validate_one_epoch(model, val_loader, criterion, device, epoch, epochs,
             if use_channels_last:
                 inputs = inputs.to(memory_format=torch.channels_last)
 
-            with torch.cuda.amp.autocast(enabled=use_amp):
+            with torch.amp.autocast('cuda', enabled=use_amp):
                 outputs = model(inputs)
                 val_loss = criterion(outputs, labels)
+
 
             batch_size = labels.size(0)
             batch_loss = val_loss.detach()

@@ -41,9 +41,10 @@ def run_benchmark_steps(model, loader, criterion, optimizer, scaler, device,
             inputs = inputs.to(memory_format=torch.channels_last)
 
         optimizer.zero_grad(set_to_none=True)
-        with torch.cuda.amp.autocast(enabled=use_amp):
+        with torch.amp.autocast('cuda', enabled=use_amp):
             outputs = model(inputs)
             loss = criterion(outputs, labels)
+
 
         if scaler is not None and use_amp:
             scaler.scale(loss).backward()
@@ -74,9 +75,10 @@ def run_benchmark_steps(model, loader, criterion, optimizer, scaler, device,
             inputs = inputs.to(memory_format=torch.channels_last)
 
         optimizer.zero_grad(set_to_none=True)
-        with torch.cuda.amp.autocast(enabled=use_amp):
+        with torch.amp.autocast('cuda', enabled=use_amp):
             outputs = model(inputs)
             loss = criterion(outputs, labels)
+
 
         if scaler is not None and use_amp:
             scaler.scale(loss).backward()
@@ -154,7 +156,8 @@ def main():
     )
     model_opt = build_model(device=device, use_channels_last=True)
     optimizer_opt = optim.AdamW(model_opt.parameters(), lr=1e-3)
-    scaler_opt = torch.cuda.amp.GradScaler(enabled=True)
+    scaler_opt = torch.amp.GradScaler('cuda', enabled=True)
+
 
     res_opt = run_benchmark_steps(
         model_opt, train_loader_opt, criterion, optimizer_opt, scaler=scaler_opt,

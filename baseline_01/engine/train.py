@@ -26,9 +26,10 @@ def train_one_epoch(model, train_loader, criterion, optimizer, device, epoch, ep
 
         optimizer.zero_grad(set_to_none=True)
 
-        with torch.cuda.amp.autocast(enabled=use_amp):
+        with torch.amp.autocast('cuda', enabled=use_amp):
             outputs = model(inputs)
             train_loss = criterion(outputs, labels)
+
 
         if scaler is not None and use_amp:
             scaler.scale(train_loss).backward()

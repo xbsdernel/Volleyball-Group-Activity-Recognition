@@ -12,30 +12,37 @@ def load_annotations(root):
     files. Returns a list of [video_folder(int), image_path, activity].
     """
     data = []
+    if not os.path.exists(root):
+        return data
 
-    for video_folder in os.listdir(root):  # loop throw videos folder
-        current_folder = os.path.join(
-            root,
-            video_folder
-        )
+    for video_folder in os.listdir(root):  # loop through video folders (0, 1, 2, ...)
+        current_folder = os.path.join(root, video_folder)
         if not os.path.isdir(current_folder):
             continue
-        for file in os.listdir(current_folder):  # loop throw each video folder (ex: 0, 1, 49, 23, ....)
-            annotations_path = os.path.join(current_folder, "annotations.txt")
-            if not os.path.isfile(annotations_path):
-                continue
-            with open(annotations_path) as file:
-                for line in file:
-                    image, activity = line.split()[:2]
-                    name, extension = os.path.splitext(image)
-                    image_path = os.path.join(
-                        current_folder,
-                        name,
-                        image
-                    )
+
+        annotations_path = os.path.join(current_folder, "annotations.txt")
+        if not os.path.isfile(annotations_path):
+            continue
+
+        with open(annotations_path, "r") as f:
+            for line in f:
+                parts = line.strip().split()
+                if len(parts) < 2:
+                    continue
+                image, activity = parts[0], parts[1]
+                name, extension = os.path.splitext(os.path.basename(image))
+                image_path = os.path.join(
+                    current_folder,
+                    name,
+                    os.path.basename(image)
+                )
+                try:
                     data.append([int(video_folder), image_path, activity])
+                except ValueError:
+                    continue
 
     return data
+
 
 
 def split_dataset(data):
