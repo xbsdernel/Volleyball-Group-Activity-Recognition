@@ -1,0 +1,344 @@
+7.4s 1 0.00s - Debugger warning: It seems that frozen modules are being used, which may
+7.4s 2 0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+7.4s 3 0.00s - to python to disable frozen modules.
+7.4s 4 0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+8.0s 5 0.00s - Debugger warning: It seems that frozen modules are being used, which may
+8.0s 6 0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+8.0s 7 0.00s - to python to disable frozen modules.
+8.0s 8 0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+25.1s 9 Device : cuda
+25.1s 10 GPU    : Tesla T4
+25.1s 11 VRAM   : 14.6 GB
+25.6s 12 Total annotated frames loaded: 4830
+120.6s 13 Original annotated frames : 4830
+120.6s 14 Valid 9-frame sequences   : 4830
+120.6s 15 Training sequences  : 2152
+120.6s 16 Validation sequences: 1341
+120.6s 17 Test sequences      : 1337
+120.6s 18 CLASSES: ['r_set', 'r_spike', 'r-pass', 'r_winpoint', 'l_set', 'l-spike', 'l-pass', 'l_winpoint']
+120.6s 19 Dataset labels: ['l-pass', 'l-spike', 'l_set', 'l_winpoint', 'r-pass', 'r_set', 'r_spike', 'r_winpoint']
+120.6s 20 Missing from CLASSES: set()
+120.6s 21 CLASSES:
+120.6s 22 'r_set'
+120.6s 23 'r_spike'
+120.6s 24 'r-pass'
+120.6s 25 'r_winpoint'
+120.6s 26 'l_set'
+120.6s 27 'l-spike'
+120.6s 28 'l-pass'
+120.6s 29 'l_winpoint'
+120.6s 30 
+120.6s 31 Dataset labels:
+120.6s 32 'l-pass'
+120.6s 33 'l-spike'
+120.6s 34 'l_set'
+120.6s 35 'l_winpoint'
+120.6s 36 'r-pass'
+120.6s 37 'r_set'
+120.6s 38 'r_spike'
+120.6s 39 'r_winpoint'
+120.6s 40 Number of classes: 8
+120.6s 41 
+120.6s 42 Class â†’ Index mapping:
+120.6s 43 l-pass           ->  0
+120.6s 44 l-spike          ->  1
+120.6s 45 l_set            ->  2
+120.6s 46 l_winpoint       ->  3
+120.6s 47 r-pass           ->  4
+120.6s 48 r_set            ->  5
+120.6s 49 r_spike          ->  6
+120.6s 50 r_winpoint       ->  7
+120.7s 51 ['l-pass' 'l-spike' 'l_set' 'l_winpoint' 'r-pass' 'r_set' 'r_spike'
+120.7s 52 'r_winpoint']
+120.7s 53 ['l-pass', 'l-spike', 'l_set', 'l_winpoint', 'r-pass', 'r_set', 'r_spike', 'r_winpoint']
+120.7s 54 Missing labels: set()
+120.7s 55 Train batches   : 1076
+120.7s 56 Val batches     : 671
+120.7s 57 Test batches    : 669
+121.4s 58 Downloading: "https://download.pytorch.org/models/resnet50-11ad3fa6.pth" to /root/.cache/torch/hub/checkpoints/resnet50-11ad3fa6.pth
+121.4s 59 0%|          | 0.00/97.8M [00:00<?, ?B/s]
+121.5s 60 0%|          | 0.00/97.8M [00:00<?, ?B/s] 20%|██        | 19.8M/97.8M [00:00<00:00, 206MB/s]
+121.6s 61 20%|██        | 19.8M/97.8M [00:00<00:00, 206MB/s] 45%|████▍     | 43.8M/97.8M [00:00<00:00, 233MB/s]
+121.7s 62 45%|████▍     | 43.8M/97.8M [00:00<00:00, 233MB/s] 67%|██████▋   | 66.0M/97.8M [00:00<00:00, 225MB/s]
+121.8s 63 67%|██████▋   | 66.0M/97.8M [00:00<00:00, 225MB/s] 93%|█████████▎| 90.8M/97.8M [00:00<00:00, 238MB/s]
+121.8s 64 93%|█████████▎| 90.8M/97.8M [00:00<00:00, 238MB/s]100%|██████████| 97.8M/97.8M [00:00<00:00, 234MB/s]
+121.9s 65 100%|██████████| 97.8M/97.8M [00:00<00:00, 234MB/s]
+121.9s 66 
+121.9s 67 
+122.3s 68 Total parameters    : 23,524,424
+122.3s 69 Trainable parameters: 23,524,424
+122.3s 70 VRAM after model load: 90.0 MB
+122.3s 71 Backbone LR : 1.0e-04
+122.3s 72 Head LR     : 1.0e-03
+122.3s 73 AMP enabled : True
+552.7s 74 Epoch   1/100 | Train Loss: 2.0348  Acc: 16.12% | Val Loss: 2.0329  Acc: 17.45% | F1: 0.0901 | LR: 2.80e-05
+552.9s 75 [+] Best model saved  (val F1 = 0.0901)
+552.9s 76 ----------------------------------------------------------------------
+868.7s 77 Epoch   2/100 | Train Loss: 2.0271  Acc: 17.43% | Val Loss: 2.0150  Acc: 16.11% | F1: 0.0640 | LR: 4.60e-05
+868.9s 78 [-] No significant improvement  [1/10]
+868.9s 79 ----------------------------------------------------------------------
+1182.6s 80 Epoch   3/100 | Train Loss: 1.9920  Acc: 16.82% | Val Loss: 1.8793  Acc: 22.97% | F1: 0.1622 | LR: 6.40e-05
+1182.9s 81 [+] Best model saved  (val F1 = 0.1622)
+1182.9s 82 ----------------------------------------------------------------------
+1493.9s 83 Epoch   4/100 | Train Loss: 1.8688  Acc: 24.07% | Val Loss: 1.8699  Acc: 26.85% | F1: 0.1928 | LR: 8.20e-05
+1494.2s 84 [+] Best model saved  (val F1 = 0.1928)
+1494.2s 85 ----------------------------------------------------------------------
+1815.2s 86 Epoch   5/100 | Train Loss: 1.7191  Acc: 30.30% | Val Loss: 1.6161  Acc: 36.39% | F1: 0.3063 | LR: 1.00e-04
+1815.5s 87 [+] Best model saved  (val F1 = 0.3063)
+1815.5s 88 ----------------------------------------------------------------------
+2146.9s 89 Epoch   6/100 | Train Loss: 1.6216  Acc: 33.09% | Val Loss: 1.5484  Acc: 40.72% | F1: 0.3541 | LR: 1.00e-04
+2147.3s 90 [+] Best model saved  (val F1 = 0.3541)
+2147.3s 91 ----------------------------------------------------------------------
+2471.2s 92 Epoch   7/100 | Train Loss: 1.5246  Acc: 38.38% | Val Loss: 1.5077  Acc: 45.86% | F1: 0.4556 | LR: 9.99e-05
+2471.5s 93 [+] Best model saved  (val F1 = 0.4556)
+2471.5s 94 ----------------------------------------------------------------------
+2791.7s 95 Epoch   8/100 | Train Loss: 1.3832  Acc: 45.17% | Val Loss: 1.1682  Acc: 58.99% | F1: 0.5675 | LR: 9.98e-05
+2792.0s 96 [+] Best model saved  (val F1 = 0.5675)
+2792.0s 97 ----------------------------------------------------------------------
+3110.6s 98 Epoch   9/100 | Train Loss: 1.2624  Acc: 51.07% | Val Loss: 1.5993  Acc: 54.51% | F1: 0.5398 | LR: 9.96e-05
+3110.8s 99 [-] No significant improvement  [1/10]
+3110.8s 100 ----------------------------------------------------------------------
+3423.6s 101 Epoch  10/100 | Train Loss: 1.1918  Acc: 52.88% | Val Loss: 1.3316  Acc: 60.33% | F1: 0.5846 | LR: 9.93e-05
+3423.9s 102 [+] Best model saved  (val F1 = 0.5846)
+3423.9s 103 ----------------------------------------------------------------------
+3740.6s 104 Epoch  11/100 | Train Loss: 1.0792  Acc: 59.06% | Val Loss: 1.1553  Acc: 61.45% | F1: 0.6102 | LR: 9.90e-05
+3740.9s 105 [+] Best model saved  (val F1 = 0.6102)
+3740.9s 106 ----------------------------------------------------------------------
+4057.6s 107 Epoch  12/100 | Train Loss: 1.0613  Acc: 60.50% | Val Loss: 1.1495  Acc: 63.53% | F1: 0.6338 | LR: 9.87e-05
+4057.9s 108 [+] Best model saved  (val F1 = 0.6338)
+4057.9s 109 ----------------------------------------------------------------------
+4371.7s 110 Epoch  13/100 | Train Loss: 1.0328  Acc: 61.11% | Val Loss: 1.0483  Acc: 67.64% | F1: 0.6669 | LR: 9.83e-05
+4372.0s 111 [+] Best model saved  (val F1 = 0.6669)
+4372.0s 112 ----------------------------------------------------------------------
+4688.4s 113 Epoch  14/100 | Train Loss: 0.9624  Acc: 63.99% | Val Loss: 1.0106  Acc: 71.22% | F1: 0.7118 | LR: 9.78e-05
+4688.7s 114 [+] Best model saved  (val F1 = 0.7118)
+4688.7s 115 ----------------------------------------------------------------------
+5006.8s 116 Epoch  15/100 | Train Loss: 0.9280  Acc: 65.38% | Val Loss: 0.9587  Acc: 74.12% | F1: 0.7422 | LR: 9.73e-05
+5007.1s 117 [+] Best model saved  (val F1 = 0.7422)
+5007.1s 118 ----------------------------------------------------------------------
+5327.8s 119 Epoch  16/100 | Train Loss: 0.8840  Acc: 68.73% | Val Loss: 0.9862  Acc: 71.07% | F1: 0.7086 | LR: 9.68e-05
+5328.0s 120 [-] No significant improvement  [1/10]
+5328.0s 121 ----------------------------------------------------------------------
+5637.3s 122 Epoch  17/100 | Train Loss: 0.8396  Acc: 68.31% | Val Loss: 1.0752  Acc: 74.42% | F1: 0.7435 | LR: 9.62e-05
+5637.5s 123 [-] No significant improvement  [2/10]
+5637.5s 124 ----------------------------------------------------------------------
+5949.7s 125 Epoch  18/100 | Train Loss: 0.8260  Acc: 70.68% | Val Loss: 1.1526  Acc: 71.22% | F1: 0.7160 | LR: 9.55e-05
+5949.9s 126 [-] No significant improvement  [3/10]
+5949.9s 127 ----------------------------------------------------------------------
+6271.6s 128 Epoch  19/100 | Train Loss: 0.8235  Acc: 69.75% | Val Loss: 0.9597  Acc: 73.75% | F1: 0.7371 | LR: 9.48e-05
+6271.8s 129 [-] No significant improvement  [4/10]
+6271.8s 130 ----------------------------------------------------------------------
+6587.0s 131 Epoch  20/100 | Train Loss: 0.7790  Acc: 70.68% | Val Loss: 0.9707  Acc: 74.57% | F1: 0.7452 | LR: 9.40e-05
+6587.2s 132 [-] No significant improvement  [5/10]
+6587.2s 133 ----------------------------------------------------------------------
+6901.9s 134 Epoch  21/100 | Train Loss: 0.8212  Acc: 69.05% | Val Loss: 0.9980  Acc: 70.92% | F1: 0.7102 | LR: 9.32e-05
+6902.1s 135 [-] No significant improvement  [6/10]
+6902.1s 136 ----------------------------------------------------------------------
+7220.0s 137 Epoch  22/100 | Train Loss: 0.7749  Acc: 70.91% | Val Loss: 0.9450  Acc: 73.23% | F1: 0.7328 | LR: 9.24e-05
+7220.2s 138 [-] No significant improvement  [7/10]
+7220.2s 139 ----------------------------------------------------------------------
+7537.4s 140 Epoch  23/100 | Train Loss: 0.7415  Acc: 71.98% | Val Loss: 0.8647  Acc: 75.17% | F1: 0.7530 | LR: 9.15e-05
+7537.7s 141 [+] Best model saved  (val F1 = 0.7530)
+7537.7s 142 ----------------------------------------------------------------------
+7855.0s 143 Epoch  24/100 | Train Loss: 0.7074  Acc: 74.07% | Val Loss: 0.8772  Acc: 75.54% | F1: 0.7559 | LR: 9.05e-05
+7855.2s 144 [-] No significant improvement  [1/10]
+7855.2s 145 ----------------------------------------------------------------------
+8171.8s 146 Epoch  25/100 | Train Loss: 0.7234  Acc: 73.37% | Val Loss: 0.9471  Acc: 71.81% | F1: 0.7179 | LR: 8.96e-05
+8172.0s 147 [-] No significant improvement  [2/10]
+8172.0s 148 ----------------------------------------------------------------------
+8486.0s 149 Epoch  26/100 | Train Loss: 0.7137  Acc: 73.09% | Val Loss: 0.9677  Acc: 72.26% | F1: 0.7215 | LR: 8.85e-05
+8486.2s 150 [-] No significant improvement  [3/10]
+8486.2s 151 ----------------------------------------------------------------------
+8801.9s 152 Epoch  27/100 | Train Loss: 0.6800  Acc: 75.05% | Val Loss: 0.9555  Acc: 72.86% | F1: 0.7278 | LR: 8.75e-05
+8802.1s 153 [-] No significant improvement  [4/10]
+8802.1s 154 ----------------------------------------------------------------------
+9117.5s 155 Epoch  28/100 | Train Loss: 0.6611  Acc: 75.37% | Val Loss: 0.9549  Acc: 77.33% | F1: 0.7736 | LR: 8.64e-05
+9117.8s 156 [+] Best model saved  (val F1 = 0.7736)
+9117.8s 157 ----------------------------------------------------------------------
+9442.9s 158 Epoch  29/100 | Train Loss: 0.6538  Acc: 76.02% | Val Loss: 0.9173  Acc: 76.36% | F1: 0.7640 | LR: 8.52e-05
+9443.1s 159 [-] No significant improvement  [1/10]
+9443.1s 160 ----------------------------------------------------------------------
+9757.3s 161 Epoch  30/100 | Train Loss: 0.6374  Acc: 77.42% | Val Loss: 1.2241  Acc: 70.40% | F1: 0.7055 | LR: 8.40e-05
+9757.5s 162 [-] No significant improvement  [2/10]
+9757.5s 163 ----------------------------------------------------------------------
+10075.7s 164 Epoch  31/100 | Train Loss: 0.6364  Acc: 76.91% | Val Loss: 0.8005  Acc: 77.70% | F1: 0.7775 | LR: 8.28e-05
+10075.9s 165 [-] No significant improvement  [3/10]
+10075.9s 166 ----------------------------------------------------------------------
+10389.6s 167 Epoch  32/100 | Train Loss: 0.6011  Acc: 77.70% | Val Loss: 0.9717  Acc: 75.24% | F1: 0.7532 | LR: 8.15e-05
+10389.7s 168 [-] No significant improvement  [4/10]
+10389.7s 169 ----------------------------------------------------------------------
+10701.8s 170 Epoch  33/100 | Train Loss: 0.5967  Acc: 77.04% | Val Loss: 0.8804  Acc: 77.93% | F1: 0.7777 | LR: 8.03e-05
+10702.1s 171 [-] No significant improvement  [5/10]
+10702.1s 172 ----------------------------------------------------------------------
+11021.2s 173 Epoch  34/100 | Train Loss: 0.5634  Acc: 78.76% | Val Loss: 1.0290  Acc: 74.65% | F1: 0.7472 | LR: 7.89e-05
+11021.4s 174 [-] No significant improvement  [6/10]
+11021.4s 175 ----------------------------------------------------------------------
+11338.4s 176 Epoch  35/100 | Train Loss: 0.5741  Acc: 78.53% | Val Loss: 0.9133  Acc: 74.79% | F1: 0.7477 | LR: 7.76e-05
+11338.6s 177 [-] No significant improvement  [7/10]
+11338.6s 178 ----------------------------------------------------------------------
+11651.1s 179 Epoch  36/100 | Train Loss: 0.5785  Acc: 77.93% | Val Loss: 1.0992  Acc: 72.71% | F1: 0.7281 | LR: 7.62e-05
+11651.3s 180 [-] No significant improvement  [8/10]
+11651.3s 181 ----------------------------------------------------------------------
+11966.9s 182 Epoch  37/100 | Train Loss: 0.5534  Acc: 80.58% | Val Loss: 0.8371  Acc: 78.23% | F1: 0.7834 | LR: 7.48e-05
+11967.2s 183 [+] Best model saved  (val F1 = 0.7834)
+11967.2s 184 ----------------------------------------------------------------------
+12278.9s 185 Epoch  38/100 | Train Loss: 0.5550  Acc: 79.79% | Val Loss: 0.9303  Acc: 77.85% | F1: 0.7776 | LR: 7.33e-05
+12279.1s 186 [-] No significant improvement  [1/10]
+12279.1s 187 ----------------------------------------------------------------------
+12595.6s 188 Epoch  39/100 | Train Loss: 0.5285  Acc: 79.88% | Val Loss: 0.9584  Acc: 78.00% | F1: 0.7808 | LR: 7.19e-05
+12595.8s 189 [-] No significant improvement  [2/10]
+12595.8s 190 ----------------------------------------------------------------------
+12910.0s 191 Epoch  40/100 | Train Loss: 0.5212  Acc: 79.69% | Val Loss: 1.0973  Acc: 74.87% | F1: 0.7495 | LR: 7.04e-05
+12910.2s 192 [-] No significant improvement  [3/10]
+12910.2s 193 ----------------------------------------------------------------------
+13222.9s 194 Epoch  41/100 | Train Loss: 0.5360  Acc: 80.20% | Val Loss: 1.1135  Acc: 75.69% | F1: 0.7566 | LR: 6.89e-05
+13223.1s 195 [-] No significant improvement  [4/10]
+13223.1s 196 ----------------------------------------------------------------------
+13535.5s 197 Epoch  42/100 | Train Loss: 0.5158  Acc: 80.86% | Val Loss: 1.0157  Acc: 76.66% | F1: 0.7657 | LR: 6.73e-05
+13535.7s 198 [-] No significant improvement  [5/10]
+13535.7s 199 ----------------------------------------------------------------------
+13848.1s 200 Epoch  43/100 | Train Loss: 0.4830  Acc: 82.11% | Val Loss: 0.9489  Acc: 75.91% | F1: 0.7601 | LR: 6.58e-05
+13848.3s 201 [-] No significant improvement  [6/10]
+13848.3s 202 ----------------------------------------------------------------------
+14166.3s 203 Epoch  44/100 | Train Loss: 0.4834  Acc: 82.99% | Val Loss: 0.9416  Acc: 77.63% | F1: 0.7753 | LR: 6.42e-05
+14166.5s 204 [-] No significant improvement  [7/10]
+14166.5s 205 ----------------------------------------------------------------------
+14485.5s 206 Epoch  45/100 | Train Loss: 0.4759  Acc: 82.20% | Val Loss: 1.0801  Acc: 76.96% | F1: 0.7700 | LR: 6.27e-05
+14485.7s 207 [-] No significant improvement  [8/10]
+14485.7s 208 ----------------------------------------------------------------------
+14802.2s 209 Epoch  46/100 | Train Loss: 0.4851  Acc: 81.92% | Val Loss: 1.0313  Acc: 78.37% | F1: 0.7839 | LR: 6.11e-05
+14802.4s 210 [-] No significant improvement  [9/10]
+14802.4s 211 ----------------------------------------------------------------------
+15125.3s 212 Epoch  47/100 | Train Loss: 0.4910  Acc: 81.46% | Val Loss: 1.0762  Acc: 76.73% | F1: 0.7669 | LR: 5.95e-05
+15125.5s 213 [-] No significant improvement  [10/10]
+15125.5s 214 
+15125.5s 215 [STOP] Early stopping triggered at epoch 47.
+15125.5s 216 
+15125.5s 217 Stage 1 complete.  Best val F1 = 0.7834
+15125.7s 218 Loaded best ResNet checkpoint from: /kaggle/working/resnet50_best.pth
+15289.0s 219 
+15289.0s 220 -- ResNet50 Test Set Results -----------------------------------------
+15289.0s 221 Accuracy  : 84.89%
+15289.0s 222 Precision : 0.8535
+15289.0s 223 Recall    : 0.8489
+15289.0s 224 F1-Score  : 0.8493
+15289.0s 225 
+15289.0s 226 -- Classification Report ---------------------------------------------
+15289.0s 227 precision    recall  f1-score   support
+15289.0s 228 
+15289.0s 229 l-pass       0.82      0.83      0.83       226
+15289.0s 230 l-spike       0.94      0.87      0.90       179
+15289.0s 231 l_set       0.77      0.85      0.81       168
+15289.0s 232 l_winpoint       0.92      0.93      0.93       102
+15289.0s 233 r-pass       0.77      0.88      0.82       210
+15289.0s 234 r_set       0.88      0.73      0.80       192
+15289.0s 235 r_spike       0.92      0.88      0.90       173
+15289.0s 236 r_winpoint       0.84      0.87      0.86        87
+15289.0s 237 
+15289.0s 238 accuracy                           0.85      1337
+15289.0s 239 macro avg       0.86      0.86      0.86      1337
+15289.0s 240 weighted avg       0.85      0.85      0.85      1337
+15289.0s 241 
+15290.6s 242 ResNet50 model saved -> /kaggle/working/resnet50_baseline_b1.pth
+15290.8s 243 VRAM allocated : 301.2 MB
+15290.8s 244 VRAM reserved  : 360.0 MB
+15290.8s 245 
+15290.8s 246 Loaded best ResNet weights from: /kaggle/working/resnet50_best.pth
+15290.8s 247 Feature extractor ready: frozen, eval mode, Identity head.
+15290.8s 248 Pre-computing TRAINING features (deterministic transform â€” no augmentation)...
+15475.3s 249 Pre-computing VALIDATION features...
+15579.1s 250 Pre-computing TEST features...
+15689.5s 251 
+15689.5s 252 Train : torch.Size([2152, 9, 2048])  dtype=torch.float16
+15689.5s 253 Val   : torch.Size([1341, 9, 2048])  dtype=torch.float16
+15689.5s 254 Test  : torch.Size([1337, 9, 2048])  dtype=torch.float16
+15689.5s 255 Total feature RAM used: 169.8 MB
+15689.5s 256 VRAM after freeing extractor: 300.9 MB
+15689.6s 257 LSTM parameters: 2,889,736
+15689.6s 258 LSTMClassifier(
+15689.6s 259 (lstm): LSTM(2048, 256, num_layers=2, batch_first=True, dropout=0.5)
+15689.6s 260 (dropout): Dropout(p=0.5, inplace=False)
+15689.6s 261 (fc): Linear(in_features=256, out_features=8, bias=True)
+15689.6s 262 )
+15689.6s 263 LSTM Train batches : 1076
+15689.6s 264 LSTM Val batches   : 671
+15689.6s 265 LSTM Test batches  : 669
+15689.6s 266 LSTM optimizer, scheduler, and AMP scaler ready.
+15689.6s 267 LR: 1.0e-03 | Warmup: 5 epochs | AMP: True
+15698.6s 268 LSTM Ep   1/100 | Train Loss: 1.0255  Acc: 83.50% | Val Loss: 0.8273  Acc: 75.54% | F1: 0.7582 | LR: 2.80e-04
+15698.6s 269 [+] Best LSTM saved  (val F1 = 0.7582)
+15698.6s 270 ----------------------------------------------------------------------
+15707.1s 271 LSTM Ep   2/100 | Train Loss: 0.1958  Acc: 94.42% | Val Loss: 0.8563  Acc: 76.88% | F1: 0.7695 | LR: 4.60e-04
+15707.1s 272 [+] Best LSTM saved  (val F1 = 0.7695)
+15707.1s 273 ----------------------------------------------------------------------
+15715.9s 274 LSTM Ep   3/100 | Train Loss: 0.1339  Acc: 95.91% | Val Loss: 0.8771  Acc: 76.29% | F1: 0.7649 | LR: 6.40e-04
+15715.9s 275 [-] No significant improvement  [1/10]
+15715.9s 276 ----------------------------------------------------------------------
+15724.4s 277 LSTM Ep   4/100 | Train Loss: 0.1114  Acc: 96.28% | Val Loss: 1.0022  Acc: 76.29% | F1: 0.7612 | LR: 8.20e-04
+15724.4s 278 [-] No significant improvement  [2/10]
+15724.4s 279 ----------------------------------------------------------------------
+15732.9s 280 LSTM Ep   5/100 | Train Loss: 0.1105  Acc: 96.28% | Val Loss: 0.9575  Acc: 75.84% | F1: 0.7601 | LR: 1.00e-03
+15732.9s 281 [-] No significant improvement  [3/10]
+15732.9s 282 ----------------------------------------------------------------------
+15741.2s 283 LSTM Ep   6/100 | Train Loss: 0.0734  Acc: 97.86% | Val Loss: 1.1186  Acc: 75.69% | F1: 0.7591 | LR: 1.00e-03
+15741.2s 284 [-] No significant improvement  [4/10]
+15741.2s 285 ----------------------------------------------------------------------
+15749.6s 286 LSTM Ep   7/100 | Train Loss: 0.0721  Acc: 97.63% | Val Loss: 1.2121  Acc: 75.54% | F1: 0.7531 | LR: 9.99e-04
+15749.6s 287 [-] No significant improvement  [5/10]
+15749.6s 288 ----------------------------------------------------------------------
+15757.9s 289 LSTM Ep   8/100 | Train Loss: 0.0688  Acc: 97.72% | Val Loss: 1.3569  Acc: 74.57% | F1: 0.7434 | LR: 9.98e-04
+15757.9s 290 [-] No significant improvement  [6/10]
+15757.9s 291 ----------------------------------------------------------------------
+15766.3s 292 LSTM Ep   9/100 | Train Loss: 0.0498  Acc: 98.61% | Val Loss: 1.2490  Acc: 75.76% | F1: 0.7577 | LR: 9.96e-04
+15766.3s 293 [-] No significant improvement  [7/10]
+15766.3s 294 ----------------------------------------------------------------------
+15774.6s 295 LSTM Ep  10/100 | Train Loss: 0.0449  Acc: 98.33% | Val Loss: 1.2907  Acc: 76.36% | F1: 0.7638 | LR: 9.93e-04
+15774.6s 296 [-] No significant improvement  [8/10]
+15774.6s 297 ----------------------------------------------------------------------
+15782.8s 298 LSTM Ep  11/100 | Train Loss: 0.0260  Acc: 99.12% | Val Loss: 1.4357  Acc: 77.18% | F1: 0.7721 | LR: 9.90e-04
+15782.8s 299 [-] No significant improvement  [9/10]
+15782.8s 300 ----------------------------------------------------------------------
+15790.9s 301 LSTM Ep  12/100 | Train Loss: 0.0313  Acc: 99.26% | Val Loss: 1.3697  Acc: 76.44% | F1: 0.7649 | LR: 9.87e-04
+15790.9s 302 [-] No significant improvement  [10/10]
+15790.9s 303 
+15790.9s 304 [STOP] Early stopping triggered at LSTM epoch 12.
+15790.9s 305 
+15790.9s 306 Stage 2 complete.  Best LSTM val F1 = 0.7695
+15790.9s 307 Loaded best LSTM checkpoint from: /kaggle/working/lstm_best.pth
+15792.3s 308 
+15792.3s 309 -- LSTM Test Set Results ---------------------------------------------
+15792.3s 310 Accuracy  : 85.04%
+15792.3s 311 Precision : 0.8563
+15792.3s 312 Recall    : 0.8504
+15792.3s 313 F1-Score  : 0.8512
+15792.3s 314 
+15792.3s 315 -- Classification Report ---------------------------------------------
+15792.3s 316 precision    recall  f1-score   support
+15792.3s 317 
+15792.3s 318 l-pass       0.85      0.77      0.81       226
+15792.3s 319 l-spike       0.96      0.85      0.90       179
+15792.3s 320 l_set       0.74      0.87      0.80       168
+15792.3s 321 l_winpoint       0.87      0.95      0.91       102
+15792.3s 322 r-pass       0.80      0.88      0.84       210
+15792.3s 323 r_set       0.82      0.83      0.82       192
+15792.3s 324 r_spike       0.94      0.86      0.90       173
+15792.3s 325 r_winpoint       0.90      0.85      0.88        87
+15792.3s 326 
+15792.3s 327 accuracy                           0.85      1337
+15792.3s 328 macro avg       0.86      0.86      0.86      1337
+15792.3s 329 weighted avg       0.86      0.85      0.85      1337
+15792.3s 330 
+15795.1s 331 LSTM model saved -> /kaggle/working/lstm_baseline_b4.pth
+15800.7s 332 /usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\|'
+15800.7s 333 cells[i][c] = re.sub('\\\\\|', '|', cell)
+15800.9s 334 /usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\_'
+15800.9s 335 text = re.sub(r'_', '\_', text) # Escape underscores in display text
+15801.7s 336 [NbConvertApp] Converting notebook __notebook__.ipynb to notebook
+15802.0s 337 [NbConvertApp] Writing 1847959 bytes to __notebook__.ipynb
+15804.5s 338 [NbConvertApp] Converting notebook __notebook__.ipynb to html
+15805.4s 339 [NbConvertApp] Support files will be in __results___files/
+15805.4s 340 [NbConvertApp] Making directory __results___files
+15805.4s 341 [NbConvertApp] Making directory __results___files
+15805.4s 342 [NbConvertApp] Making directory __results___files
+15805.4s 343 [NbConvertApp] Making directory __results___files
+15805.4s 344 [NbConvertApp] Writing 1657108 bytes to __results__.html

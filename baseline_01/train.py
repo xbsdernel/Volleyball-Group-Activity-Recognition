@@ -1,189 +1,238 @@
+"""
+Baseline 1: Training Script
+Trains ResNet-50 on single middle frames using AMP, AdamW, differential learning rates,
+and Cosine Annealing with Warmup scheduler.
+Outputs artifacts to results/1_B1_Image_Classification/ and logs to logs/train.log.
+"""
+
 import os
-import sys
+import random
+import logging
+import argparse
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from tqdm.auto import tqdm
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torch.distributed as dist
-import torch.multiprocessing as mp
+from sklearn.metrics import f1_score
 
-from configs import config
-from datasets.prepare_dataset import prepare_data
-from datasets.dataloaders import get_datasets, get_dataloaders
-from models.resnet50 import build_model
-from engine.train import train_one_epoch
-from engine.validate import validate_one_epoch
-from utils.device import get_device
-from utils.early_stopping import EarlyStopping
-from utils.plots import plot_metrics
-from utils.helpers import ensure_dir
-from utils.seed import set_seed
+from model import B1ImageClassifier
+from dataset import build_dataloaders, CLASSES
 
 
-def train_worker(rank, world_size, train_data, val_data, test_data):
-    is_distributed = world_size > 1
+def setup_logger(log_file: str):
+    os.makedirs(os.path.dirname(log_file), exist_ok=True)
+    logger = logging.getLogger("B1_Train")
+    logger.setLevel(logging.INFO)
+    logger.handlers.clear()
 
-    if is_distributed:
-        backend = "gloo" if sys.platform == "win32" else "nccl"
-        os.environ["MASTER_ADDR"] = "127.0.0.1"
-        os.environ["MASTER_PORT"] = "29500"
-        dist.init_process_group(backend=backend, rank=rank, world_size=world_size)
-        torch.cuda.set_device(rank)
-        device = torch.device(f"cuda:{rank}")
-    else:
-        device = torch.device(get_device())
+    formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
 
-    is_main_process = (rank == 0)
+    fh = logging.FileHandler(log_file)
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
 
-    if is_main_process:
-        set_seed(config.SEED)
-        print(f"[Info] Running training with World Size = {world_size} on device: {device}")
-        print(f"[Info] Optimizations enabled: AMP={config.USE_AMP}, ChannelsLast={config.USE_CHANNELS_LAST}, "
-              f"cuDNN Benchmark={config.CUDNN_BENCHMARK}, DDP={is_distributed}")
+    ch = logging.StreamHandler()
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+    return logger
 
-    if config.CUDNN_BENCHMARK and torch.cuda.is_available():
-        torch.backends.cudnn.benchmark = True
 
-    # Prepare datasets and dataloaders
-    train_dataset, val_dataset, test_dataset = get_datasets(train_data, val_data, test_data)
-    train_loader, val_loader, test_loader, train_sampler = get_dataloaders(
-        train_dataset, val_dataset, test_dataset,
-        batch_size=config.BATCH_SIZE,
-        num_workers=config.NUM_WORKERS,
-        is_distributed=is_distributed,
-        rank=rank,
-        world_size=world_size
+def set_seed(seed: int = 42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.benchmark = True
+    torch.backends.cudnn.deterministic = False
+
+
+def train_b1(
+    data_root: str = "/kaggle/input/datasets/ahmedmohamed365/volleyball/volleyball_/videos",
+    results_dir: str = "results/1_B1_Image_Classification",
+    epochs: int = 50,
+    batch_size: int = 64,
+    lr: float = 1e-3,
+    warmup_epochs: int = 3,
+    early_stop_patience: int = 7,
+    early_stop_min_delta: float = 0.005,
+    num_workers: int = 2
+):
+    set_seed(42)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
+    os.makedirs(log_dir, exist_ok=True)
+    logger = setup_logger(os.path.join(log_dir, "train.log"))
+
+    logger.info(f"Using device: {device}")
+    if device == "cuda":
+        logger.info(f"GPU: {torch.cuda.get_device_name(0)}")
+
+    plots_dir = os.path.join(results_dir, "plots")
+    metrics_dir = os.path.join(results_dir, "metrics")
+    os.makedirs(plots_dir, exist_ok=True)
+    os.makedirs(metrics_dir, exist_ok=True)
+    model_save_path = os.path.join(results_dir, "best_model.pth")
+    local_ckpt_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "checkpoints")
+    os.makedirs(local_ckpt_dir, exist_ok=True)
+    local_ckpt_path = os.path.join(local_ckpt_dir, "best_model.pth")
+
+    logger.info("Building datasets and DataLoaders...")
+    train_loader, val_loader, test_loader, label_encoder = build_dataloaders(
+        data_root=data_root, batch_size=batch_size, num_workers=num_workers
     )
 
-    # Build model and wrap in DDP if distributed
-    model = build_model(device=device, use_channels_last=config.USE_CHANNELS_LAST)
+    logger.info(f"Classes ({len(CLASSES)}): {CLASSES}")
+    logger.info(f"Train batches: {len(train_loader)} | Val batches: {len(val_loader)}")
 
-    if is_distributed:
-        model = nn.parallel.DistributedDataParallel(model, device_ids=[rank])
+    model = B1ImageClassifier(num_classes=len(CLASSES), pretrained=True, dropout=0.3).to(device)
 
-    # Loss, optimizer, scheduler, AMP scaler
+    # Differential learning rates: 10x lower for pretrained backbone
+    backbone_params = [p for n, p in model.named_parameters() if 'fc' not in n]
+    head_params = list(model.backbone.fc.parameters())
+
+    optimizer = optim.AdamW([
+        {'params': backbone_params, 'lr': lr * 0.1},
+        {'params': head_params,     'lr': lr}
+    ], weight_decay=1e-4)
+
+    _warmup = optim.lr_scheduler.LinearLR(optimizer, start_factor=0.1, end_factor=1.0, total_iters=warmup_epochs)
+    _cosine = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs - warmup_epochs, eta_min=1e-6)
+    scheduler = optim.lr_scheduler.SequentialLR(optimizer, schedulers=[_warmup, _cosine], milestones=[warmup_epochs])
+
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.AdamW(model.parameters(), lr=config.LR)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-        optimizer,
-        T_max=config.EPOCHS,
-        eta_min=1e-6
-    )
-    scaler = torch.amp.GradScaler('cuda', enabled=config.USE_AMP)
+    scaler = torch.cuda.amp.GradScaler(enabled=(device == "cuda"))
 
+    history = {'train_loss': [], 'val_loss': [], 'train_acc': [], 'val_acc': [], 'val_f1': []}
+    best_val_f1 = 0.0
+    early_stop_counter = 0
 
-    # Metric tracking
-    total_loss_train_plot = []
-    total_loss_validation_plot = []
-    total_acc_train_plot = []
-    total_acc_validation_plot = []
+    logger.info(f"Starting training for {epochs} epochs...")
+    for epoch in range(epochs):
+        model.train()
+        total_loss_train, correct_train, total_train = 0.0, 0, 0
 
-    early_stopping = EarlyStopping(patience=config.PATIENCE)
+        for inputs, labels in tqdm(train_loader, desc=f"Epoch {epoch+1:02d}/{epochs} [Train]", leave=False):
+            inputs = inputs.to(device, non_blocking=True)
+            labels = labels.to(device, non_blocking=True)
 
-    if is_main_process:
-        ensure_dir(config.CHECKPOINT_DIR)
-        ensure_dir("plots")
+            optimizer.zero_grad()
+            with torch.cuda.amp.autocast(enabled=(device == "cuda")):
+                outputs = model(inputs)
+                loss = criterion(outputs, labels)
 
-    for epoch in range(config.EPOCHS):
-        if is_distributed and train_sampler is not None:
-            train_sampler.set_epoch(epoch)
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
 
-        avg_train_loss, train_accuracy = train_one_epoch(
-            model=model,
-            train_loader=train_loader,
-            criterion=criterion,
-            optimizer=optimizer,
-            device=device,
-            epoch=epoch,
-            epochs=config.EPOCHS,
-            scaler=scaler,
-            use_amp=config.USE_AMP,
-            use_channels_last=config.USE_CHANNELS_LAST,
-            is_main_process=is_main_process,
-            is_distributed=is_distributed
-        )
+            total_loss_train += loss.item() * inputs.size(0)
+            preds = outputs.argmax(dim=1)
+            correct_train += (preds == labels).sum().item()
+            total_train += labels.size(0)
 
-        avg_val_loss, val_accuracy = validate_one_epoch(
-            model=model,
-            val_loader=val_loader,
-            criterion=criterion,
-            device=device,
-            epoch=epoch,
-            epochs=config.EPOCHS,
-            use_amp=config.USE_AMP,
-            use_channels_last=config.USE_CHANNELS_LAST,
-            is_main_process=is_main_process,
-            is_distributed=is_distributed
-        )
+        avg_train_loss = total_loss_train / max(1, total_train)
+        avg_train_acc = correct_train / max(1, total_train) * 100
+
+        # Validation
+        model.eval()
+        total_loss_val, correct_val, total_val = 0.0, 0, 0
+        all_val_preds, all_val_labels = [], []
+
+        with torch.no_grad():
+            for inputs, labels in val_loader:
+                inputs = inputs.to(device, non_blocking=True)
+                labels = labels.to(device, non_blocking=True)
+
+                with torch.cuda.amp.autocast(enabled=(device == "cuda")):
+                    outputs = model(inputs)
+                    loss = criterion(outputs, labels)
+
+                total_loss_val += loss.item() * inputs.size(0)
+                preds = outputs.argmax(dim=1)
+                correct_val += (preds == labels).sum().item()
+                total_val += labels.size(0)
+
+                all_val_preds.extend(preds.cpu().numpy())
+                all_val_labels.extend(labels.cpu().numpy())
+
+        avg_val_loss = total_loss_val / max(1, total_val)
+        avg_val_acc = correct_val / max(1, total_val) * 100
+        val_f1 = f1_score(all_val_labels, all_val_preds, average='weighted', zero_division=0)
 
         scheduler.step()
 
-        if is_main_process:
-            total_loss_train_plot.append(round(avg_train_loss, 4))
-            total_loss_validation_plot.append(round(avg_val_loss, 4))
-            total_acc_train_plot.append(round(train_accuracy, 4))
-            total_acc_validation_plot.append(round(val_accuracy, 4))
+        history['train_loss'].append(avg_train_loss)
+        history['val_loss'].append(avg_val_loss)
+        history['train_acc'].append(avg_train_acc)
+        history['val_acc'].append(avg_val_acc)
+        history['val_f1'].append(val_f1)
 
-            print(
-                f"Epoch {epoch + 1}/{config.EPOCHS}, "
-                f"Train Loss: {avg_train_loss:.4f} "
-                f"Train Accuracy: {train_accuracy:.2f}% "
-                f"Validation Loss: {avg_val_loss:.4f} "
-                f"Validation Accuracy: {val_accuracy:.2f}%"
-            )
-            print("=" * 25)
-
-        should_stop = early_stopping.step(
-            avg_val_loss=avg_val_loss,
-            model=model,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            scaler=scaler,
-            epoch=epoch,
-            is_main_process=is_main_process
+        logger.info(
+            f"Epoch {epoch+1:02d}/{epochs:02d} | "
+            f"Train Loss: {avg_train_loss:.4f} Acc: {avg_train_acc:.2f}% | "
+            f"Val Loss: {avg_val_loss:.4f} Acc: {avg_val_acc:.2f}% F1: {val_f1:.4f}"
         )
 
-        # Synchronize early stopping decision across DDP ranks
-        if is_distributed:
-            stop_tensor = torch.tensor([1 if should_stop else 0], device=device)
-            dist.all_reduce(stop_tensor, op=dist.ReduceOp.MAX)
-            if stop_tensor.item() == 1:
+        # Early stopping and model checkpointing
+        if val_f1 > (best_val_f1 + early_stop_min_delta):
+            best_val_f1 = val_f1
+            early_stop_counter = 0
+            torch.save(model.state_dict(), model_save_path)
+            torch.save(model.state_dict(), local_ckpt_path)
+            logger.info(f"  --> Saved new best checkpoint (Val F1: {best_val_f1:.4f})")
+        else:
+            early_stop_counter += 1
+            if early_stop_counter >= early_stop_patience:
+                logger.info(f"[Early Stopping] No improvement for {early_stop_patience} consecutive epochs.")
                 break
-        elif should_stop:
-            break
 
-    if is_main_process:
-        plot_metrics(
-            total_loss_train_plot,
-            total_loss_validation_plot,
-            total_acc_train_plot,
-            total_acc_validation_plot,
-            save_path="plots/training_curves.png"
-        )
+    # Save training history & curves
+    history_df = pd.DataFrame(history)
+    history_df.to_csv(os.path.join(metrics_dir, "training_history.csv"), index=False)
 
-    if is_distributed:
-        dist.destroy_process_group()
+    fig, axs = plt.subplots(1, 2, figsize=(14, 5))
+    axs[0].plot(history['train_loss'], label='Train Loss', color='royalblue')
+    axs[0].plot(history['val_loss'], label='Val Loss', color='crimson')
+    axs[0].set_title('B1 Loss Curve')
+    axs[0].set_xlabel('Epoch')
+    axs[0].set_ylabel('Loss')
+    axs[0].legend()
+    axs[0].grid(True, alpha=0.3)
 
-    return model, test_loader, test_dataset
+    axs[1].plot(history['train_acc'], label='Train Acc', color='royalblue')
+    axs[1].plot(history['val_acc'], label='Val Acc', color='crimson')
+    axs[1].plot([f * 100 for f in history['val_f1']], label='Val F1 (%)', color='forestgreen', linestyle='--')
+    axs[1].set_title('B1 Accuracy & F1 Curve')
+    axs[1].set_xlabel('Epoch')
+    axs[1].set_ylabel('Percentage (%)')
+    axs[1].legend()
+    axs[1].grid(True, alpha=0.3)
 
-
-def main():
-    set_seed(config.SEED)
-    print("[Main] Pre-caching pretrained ResNet-50 weights...")
-    _ = build_model(device="cpu", use_channels_last=False)
-
-    train_data, val_data, test_data = prepare_data()
-
-    num_gpus = torch.cuda.device_count() if torch.cuda.is_available() else 0
-    if config.USE_DDP and num_gpus > 1:
-        world_size = num_gpus
-        print(f"[Main] Spawning {world_size} DDP worker processes...")
-        mp.spawn(train_worker, nprocs=world_size, args=(world_size, train_data, val_data, test_data))
-    else:
-        print("[Main] Running single-process execution...")
-        train_worker(0, 1, train_data, val_data, test_data)
-
+    plt.tight_layout()
+    plt.savefig(os.path.join(plots_dir, "training_curves.png"), dpi=300)
+    plt.close()
+    logger.info(f"Training completed. Checkpoints and curves saved to {results_dir}.")
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Train Baseline 1: Single Image Classification")
+    parser.add_argument("--data_root", type=str, default="/kaggle/input/datasets/ahmedmohamed365/volleyball/volleyball_/videos")
+    parser.add_argument("--results_dir", type=str, default="results/1_B1_Image_Classification")
+    parser.add_argument("--epochs", type=int, default=50)
+    parser.add_argument("--batch_size", type=int, default=64)
+    parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--num_workers", type=int, default=2)
+    args = parser.parse_args()
 
+    train_b1(
+        data_root=args.data_root,
+        results_dir=args.results_dir,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+        lr=args.lr,
+        num_workers=args.num_workers
+    )

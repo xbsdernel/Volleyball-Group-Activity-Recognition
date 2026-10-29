@@ -1,0 +1,9 @@
+{
+    "model": "B1 - Image Classification",
+    "test_accuracy": 0.5931189229618549,
+    "test_f1_weighted": 0.5941987818990482,
+    "test_f1_macro": 0.5952291440948017,
+    "test_precision": 0.6031374045785808,
+    "test_recall": 0.5931189229618549,
+    "best_val_f1": 0.5061642823387518
+}

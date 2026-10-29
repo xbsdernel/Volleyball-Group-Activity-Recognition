@@ -1,0 +1,9 @@
+{
+    "model": "B3 - Fine-tuned Person Classification",
+    "test_accuracy": 0.45400149588631267,
+    "test_f1_weighted": 0.4498054637073478,
+    "test_f1_macro": 0.44508775242556825,
+    "test_precision": 0.4546832339676275,
+    "test_recall": 0.45400149588631267,
+    "best_val_accuracy": 44.369873228933635
+}
